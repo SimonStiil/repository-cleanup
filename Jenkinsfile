@@ -62,13 +62,6 @@ podTemplate(yaml: '''
             props = readProperties file: 'package.env'
             
             try{
-              props.put("github_event", x_github_event)
-            } catch(all) {
-              echo "Warning: x_github_event missing"
-              return
-            }
-            
-            try{
               props.put("repository", repository)
               props.put("repository_short", repository_short)
             } catch(all) {
@@ -77,18 +70,30 @@ podTemplate(yaml: '''
             try{
               if (x_github_event == "pull_request" && pull_request_action == "closed"){
                 props.put("branch", "PR-"+pull_request_number)
+                props.put("github_event", "delete")
               } else {
-                props.put("branch", branch)
+                try{
+                  props.put("branch", branch)
+                } catch(all) {
+                  echo "Info: branch missing"
+                }
+                try{
+                  props.put("branchType", branchType)
+                } catch(all) {
+                  echo "Info: branchType missing"
+                }
+                try{
+                  props.put("github_event", x_github_event)
+                } catch(all) {
+                  echo "Warning: x_github_event missing"
+                  return
+                }
               }
             } catch(all) {
               echo "Warning: " + all.toString()
             }
             
-            try{
-              props.put("branchType", branchType)
-            } catch(all) {
-              echo "Info: branchType missing"
-            }
+
           }
           stage('Cleanup Packages'){
             githubPackageCleanupVersions props
