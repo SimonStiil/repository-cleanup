@@ -47,7 +47,7 @@ podTemplate(yaml: '''
     if ( currentBuild.getBuildCauses("org.jenkinsci.plugins.gwt.GenericCause").size() > 0) {
       try{
         currentBuild.description = x_github_event
-        if (x_github_event != "push" && x_github_event != "delete") {
+        if (x_github_event != "push" && x_github_event != "delete" && x_github_event != "pull_request") {
           return
         }
       } catch(all) {
