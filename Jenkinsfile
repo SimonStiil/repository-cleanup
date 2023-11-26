@@ -13,7 +13,9 @@ properties([buildDiscarder(
                         [key: 'branch', value: '$.ref'],
                         [key: 'branchType', value: '$.ref_type'],
                         [key: 'repository', value: '$.repository.full_name'],
-                        [key: 'repository_short', value: '$.repository.name']
+                        [key: 'repository_short', value: '$.repository.name'],
+                        [key: 'pull_request_action', value: '$.action'],
+                        [key: 'pull_request_number', value: '$.number']
                     ],
                     genericHeaderVariables: [
                         [key: 'x-github-event']
@@ -62,26 +64,30 @@ podTemplate(yaml: '''
             try{
               props.put("github_event", x_github_event)
             } catch(all) {
-              println "Warning: x_github_event missing"
+              echo "Warning: x_github_event missing"
+              return
             }
             
             try{
               props.put("repository", repository)
               props.put("repository_short", repository_short)
             } catch(all) {
-              println "Warning: repository or repository_short missing"
+              echo "Warning: repository or repository_short missing"
             }
-            
             try{
-              props.put("branch", branch)
+              if (x_github_event == "pull_request" && pull_request_action == "closed"){
+                props.put("branch", "PR-"+pull_request_number)
+              } else {
+                props.put("branch", branch)
+              }
             } catch(all) {
-              println "Warning: branch missing"
+              echo "Warning: " + all.toString()
             }
             
             try{
               props.put("branchType", branchType)
             } catch(all) {
-              println "Info: branchType missing"
+              echo "Info: branchType missing"
             }
           }
           stage('Cleanup Packages'){
@@ -89,7 +95,7 @@ podTemplate(yaml: '''
           }
         }
     } else {
-          println "not started by Webhook"
+          echo "not started by Webhook"
     }
   }
 }
