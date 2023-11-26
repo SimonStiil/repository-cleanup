@@ -48,7 +48,11 @@ podTemplate(yaml: '''
     }
     if ( currentBuild.getBuildCauses("org.jenkinsci.plugins.gwt.GenericCause").size() > 0) {
       try{
+        currentBuild.description = x_github_event+"."+pull_request_action
+      } catch(all) {
         currentBuild.description = x_github_event
+      }
+      try{
         if (x_github_event != "push" && x_github_event != "delete" && x_github_event != "pull_request") {
           return
         }
@@ -58,7 +62,11 @@ podTemplate(yaml: '''
         container('curl') {
           Map props
           stage('Get main Docker env'){
-            httpRequest outputFile: 'package.env', url: "https://raw.githubusercontent.com/${repository}/main/package.env"
+            httpRequest outputFile: 'package.env', 
+                url: "https://raw.githubusercontent.com/${repository}/main/package.env",
+                consoleLogResponseBody: false,
+                quiet: true,
+                wrapAsMultipart: false
             props = readProperties file: 'package.env'
             
             try{
@@ -71,6 +79,7 @@ podTemplate(yaml: '''
               if (x_github_event == "pull_request" && pull_request_action == "closed"){
                 props.put("branch", "PR-"+pull_request_number)
                 props.put("github_event", "delete")
+                
               } else {
                 try{
                   props.put("branch", branch)
