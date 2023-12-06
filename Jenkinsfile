@@ -21,7 +21,7 @@ properties([buildDiscarder(
                         [key: 'x-github-event']
                     ],
                     causeString: 'Triggered on $branch ($repository)',
-                    tokenCredentialId: 'generic-webhook-token',
+                    tokenCredentialId: 'jenkins-webhook-repo-cleanup',
                     printContributedVariables: true,
                     printPostContent: true,
                     silentResponse: false
