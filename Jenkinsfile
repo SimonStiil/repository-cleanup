@@ -105,10 +105,10 @@ podTemplate(yaml: '''
 
           }
           stage('Cleanup Packages'){
-            if (props.PACKAGE_DESTINATION.contains("docker.io"){
+            if (props.PACKAGE_DESTINATION.contains("docker.io")){
               dockerhubCleanupTags props
             }
-            if (props.PACKAGE_DESTINATION.contains("ghcr.io"){
+            if (props.PACKAGE_DESTINATION.contains("ghcr.io")){
               githubPackageCleanupVersions props
             }
           }
