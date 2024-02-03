@@ -68,7 +68,14 @@ podTemplate(yaml: '''
                 quiet: true,
                 wrapAsMultipart: false
             props = readProperties file: 'package.env'
-            
+            try{
+              currentBuild.description = props.PACKAGE_DESTINATION.split("/")[0] + "\n" + repository + "\n" + x_github_event+"."+pull_request_action
+            } catch(all) {
+              try{
+                currentBuild.description = props.PACKAGE_DESTINATION.split("/")[0] + "\n" + repository + "\n" + x_github_event
+              } catch(any) {
+              }
+            }
             try{
               props.put("repository", repository)
               props.put("repository_short", repository_short)
