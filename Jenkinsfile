@@ -102,13 +102,15 @@ podTemplate(yaml: '''
               echo "Warning: " + all.toString()
             }
             
-
+            echo "Properties: " + props.toString()
           }
           stage('Cleanup Packages'){
             if (props.PACKAGE_DESTINATION.contains("docker.io")){
+              echo "docker.io cleanup"
               dockerhubCleanupTags props
             }
             if (props.PACKAGE_DESTINATION.contains("ghcr.io")){
+              echo "ghcr.io cleanup"
               githubPackageCleanupVersions props
             }
           }
