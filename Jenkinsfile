@@ -26,6 +26,13 @@ properties([buildDiscarder(
                     printPostContent: true,
                     silentResponse: false
                 ]
+            ]),
+            parameters([
+                string(
+                    defaultValue: 'scriptcrunch', 
+                    name: 'STRING-PARAMETER', 
+                    trim: true
+                )
             ])
 ])
 podTemplate(yaml: '''
