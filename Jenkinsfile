@@ -41,7 +41,7 @@ podTemplate(yaml: '''
     spec:
       containers:
       - name: curl
-        image: curlimages/curl:8.12.1
+        image: curlimages/curl:8.13.0
         command:
         - sleep
         args: 
