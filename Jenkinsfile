@@ -60,7 +60,8 @@ podTemplate(yaml: '''
         currentBuild.description = repository + "\n" + x_github_event
       }
       try{
-        if (x_github_event != "push" && x_github_event != "delete" && x_github_event != "pull_request") {
+        if (x_github_event != "delete" && (x_github_event == "pull_request" && pull_request_action != "closed")) {
+          echo "Skipping branch: " + branch
           return
         }
       } catch(all) {
